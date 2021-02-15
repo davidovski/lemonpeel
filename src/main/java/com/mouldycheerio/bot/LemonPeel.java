@@ -8,16 +8,15 @@ import javax.security.auth.login.LoginException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.mouldycheerio.bot.resources.ResourceManager;
 import com.mouldycheerio.dbot.CustomBot;
 import com.mouldycheerio.dbot.coins.CoinController;
-import com.mouldycheerio.dbot.coins.triggers.RobTrigger;
-import com.mouldycheerio.dbot.coins.triggers.TriggersManager;
 import com.mouldycheerio.dbot.util.PeelingUtils;
 
-public class LemonPeel extends  CustomBot {
-
+public class LemonPeel extends CustomBot {
 
     private CoinController coinController;
+    private ResourceManager resourceManager;
 
     public static LemonPeel fromJSON(File file) throws LoginException, JSONException, IOException, InterruptedException {
         JSONObject loadJSON = PeelingUtils.loadJSONPretty(file);
@@ -26,10 +25,13 @@ public class LemonPeel extends  CustomBot {
 
     public LemonPeel(JSONObject config) throws IOException, LoginException, JSONException, InterruptedException {
         super(config);
-        coinController = CoinController.autoLoad(this);
-        getCommandController().removeCommand("generate");
-        TriggersManager triggersManager = coinController.getTriggersManager();
-        triggersManager.addGlobalTrigger(RobTrigger.create());
+        // coinController = CoinController.autoLoad(this);
+        // getCommandController().removeCommand("generate");
+        // TriggersManager triggersManager = coinController.getTriggersManager();
+        // triggersManager.addGlobalTrigger(RobTrigger.create());
+
+        resourceManager = new ResourceManager(this);
+
     }
 
     public static void main(String[] args) {

@@ -1,0 +1,46 @@
+{
+    "cities": [
+        {
+            "production": {
+                "money": -10,
+                "gems": 1
+            },
+            "name": "machine",
+            "purchase": {"money": 1}
+        },
+        {
+            "production": {
+                "gems": -2,
+                "money": 10
+            },
+            "name": "machine2",
+            "purchase": {"money": 3289}
+        },
+        {
+            "production": {
+                "money": -50,
+                "wood": 50
+            },
+            "name": "woodsmith",
+            "purchase": {"money": 0}
+        }
+    ],
+    "resources": [
+        {
+            "symbol": "$",
+            "name": "money",
+            "value": 1
+        },
+        {
+            "symbol": "💎",
+            "name": "gems",
+            "value": 1
+        },
+        {
+            "symbol": "🪵",
+            "name": "wood",
+            "value": 1
+        }
+    ],
+    "primary_resource": "money"
+}
