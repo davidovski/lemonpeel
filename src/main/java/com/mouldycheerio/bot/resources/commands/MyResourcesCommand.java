@@ -16,7 +16,7 @@ public class MyResourcesCommand extends ResourceCommand {
 
     public MyResourcesCommand(ResourceManager resourceManager) {
         super(resourceManager);
-        setCommandDetails(CommandDetails.from("resources,inventory,inv,balance", "Lists your current inventory of resources and the current production from all of your factories", "resources [@user]"));
+        setCommandDetails(CommandDetails.from("resources,inventory,inv,i", "Lists your current inventory of resources and the current production from all of your factories", "resources [@user]"));
 
     }
 
@@ -39,10 +39,11 @@ public class MyResourcesCommand extends ResourceCommand {
             stringBuilder.append("" + r.getName() + ": **" + l + r.getSymbol() + "** ");
             long p = production.getResource(r);
             if (p != 0) {
-                stringBuilder.append("[+" + r.prettyValue(p) + "/h]");
+                stringBuilder.append("[" + (p > 0 ? "+" : "-") + r.prettyValue(p) + "/h]");
             }
             stringBuilder.append("\n");
         });
+        // TODO sort by most had resource
 
         op.sendMessage(e, (your ? "Your" : user.getName() + "'s") + "Resources", stringBuilder.toString());
     }

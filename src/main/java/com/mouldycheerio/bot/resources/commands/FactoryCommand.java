@@ -22,7 +22,7 @@ public class FactoryCommand extends ResourceCommand {
 
     public FactoryCommand(ResourceManager resourceManager) {
         super(resourceManager);
-        setCommandDetails(CommandDetails.from("shop,factoryshop,factory", "Buy and list factories that can be purchased", "shop [list/info/buy]"));
+        setCommandDetails(CommandDetails.from("shop,factoryshop,factory,s", "Buy and list factories that can be purchased", "shop [list/info/buy]"));
 
     }
 

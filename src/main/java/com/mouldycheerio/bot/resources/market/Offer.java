@@ -55,7 +55,7 @@ public class Offer extends JSONObject {
     }
 
     public User getUser(JDA jda) {
-        return jda.getUserById(getUserID());
+        return jda.retrieveUserById(getUserID()).complete();
     }
 
     public void setUserID(String userid) {

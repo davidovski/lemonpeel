@@ -38,13 +38,13 @@ public class MarketManager {
     public void load() {
         JSONObject loadJSON = PeelingUtils.loadJSON(dataFile);
         if (loadJSON.has("offers")) {
-        loadJSON.getJSONArray("offers").forEach(o -> {
-            if (o instanceof JSONObject) {
-                Offer offer = new Offer((JSONObject) o);
-                offers.add(offer);
-            }
-        });
-    }
+            loadJSON.getJSONArray("offers").forEach(o -> {
+                if (o instanceof JSONObject) {
+                    Offer offer = new Offer((JSONObject) o);
+                    offers.add(offer);
+                }
+            });
+        }
     }
 
     public void save() {
@@ -75,15 +75,16 @@ public class MarketManager {
         while (iterator.hasNext()) {
             Offer offer = iterator.next();
 
-            User seller = offer.getUser(bot.getClient());
-            long quantity = offer.getSellingQuantity();
-            Resource resource = offer.getSellingResource(resourceManager);
-            long l = resource.get(seller);
-            if (l < quantity) {
+            bot.getClient().retrieveUserById(offer.getUserID()).queue(seller -> {
+                long quantity = offer.getSellingQuantity();
+                Resource resource = offer.getSellingResource(resourceManager);
+                long l = resource.get(seller);
+                if (l < quantity) {
 
-                sendNoLongerValidMessage(offer, seller);
-                iterator.remove();
-            }
+                    sendNoLongerValidMessage(offer, seller);
+                    iterator.remove();
+                }
+            });
         }
 
         save();
@@ -105,7 +106,13 @@ public class MarketManager {
     }
 
     public List<Field> getEmbedFields() {
-        return listOffers().stream().map(o -> new Field("[" + o.getID() + "] " + o.getUser(bot.getClient()).getAsTag(), o.getAsString(resourceManager), false))
+        return listOffers().stream().map(
+                o -> new Field(
+                        "[" + o.getID() + "] "
+                                + o.getAsString(resourceManager),
+                        "<@" + o.getUserID() + ">", false
+                )
+        )
                 .collect(Collectors.toList());
     }
 

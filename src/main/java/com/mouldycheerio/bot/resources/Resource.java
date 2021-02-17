@@ -1,6 +1,8 @@
 package com.mouldycheerio.bot.resources;
 
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 import org.json.JSONObject;
 
@@ -59,6 +61,33 @@ public class Resource extends JSONObject {
         return 0l;
     }
 
+    public long getValue(String userid) {
+        try {
+            return DatabaseUtils.getInKVtable(resourceManager.getDatabasepath(), tableName, userid);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0l;
+    }
+
+    public long total() {
+        try {
+            return DatabaseUtils.getTotal(resourceManager.getDatabasepath(), tableName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<String> getUsers() {
+        try {
+            return DatabaseUtils.listKeys(resourceManager.getDatabasepath(), tableName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
+
     public void increment(User user, long amount) {
         set(user, get(user) + amount);
     }
@@ -80,7 +109,11 @@ public class Resource extends JSONObject {
     }
 
     public long getValue() {
-        return getLong(VALUE);
+        if (total() <= 0) {
+            return -1;
+        } else {
+            return resourceManager.getPrimaryResource().total() / total();
+        }
     }
 
     public void setValue(long value) {

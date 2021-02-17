@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,11 +17,13 @@ import com.mouldycheerio.bot.resources.commands.CreateResourceCommand;
 import com.mouldycheerio.bot.resources.commands.FactoriesCommand;
 import com.mouldycheerio.bot.resources.commands.FactoryCommand;
 import com.mouldycheerio.bot.resources.commands.GiveResourcesCommand;
+import com.mouldycheerio.bot.resources.commands.LeaderBoardCommand;
 import com.mouldycheerio.bot.resources.commands.ListResourcesCommand;
 import com.mouldycheerio.bot.resources.commands.MyResourcesCommand;
 import com.mouldycheerio.bot.resources.commands.RemoveCityCommand;
 import com.mouldycheerio.bot.resources.commands.RemoveResourceCommand;
 import com.mouldycheerio.bot.resources.commands.SetPrimaryResourceCommand;
+import com.mouldycheerio.bot.resources.commands.ValuesCommand;
 import com.mouldycheerio.bot.resources.factories.Factory;
 import com.mouldycheerio.bot.resources.market.MarketCommand;
 import com.mouldycheerio.bot.resources.market.MarketManager;
@@ -118,6 +121,24 @@ public class ResourceManager {
             }
         });
 
+        cc.addCommand(CommandDetails.from("balance,bal,$,money"), (e, b, args) -> {
+            User u = e.getAuthor();
+            if (args.length > 0) {
+                Optional<User> mentionToUser = PeelingUtils.mentionToUser(args[0], e.getJDA());
+                if (mentionToUser.isPresent()) {
+                    u = mentionToUser.get();
+                }
+            }
+
+            bot.sendMessage(
+                    e, (u == e.getAuthor() ? "You have" : u.getAsMention() + " has")
+                            + " **" + getPrimaryResource().prettyValue(
+                                    getPrimaryResource().get(u)
+                            ) + "**"
+            );
+
+        });
+
         // public commands
         cc.addCommand(myResourcesCommand);
         cc.addCommand(new FactoryCommand(this));
@@ -126,6 +147,8 @@ public class ResourceManager {
         cc.addCommand(new GiveResourcesCommand(this));
         cc.addCommand(new MarketCommand(marketManager));
 
+        cc.addCommand(new ValuesCommand(this));
+        cc.addCommand(new LeaderBoardCommand(this));
     }
 
     private void loadResources() {
@@ -294,7 +317,7 @@ public class ResourceManager {
             ResourceTable productionTable = city.getProductionTable();
             ResourceTable negatives = productionTable.negatives();
 
-            if  (negatives.doesUserHave(user, this).size() == 0)  {
+            if (negatives.doesUserHave(user, this).size() == 0) {
                 prouction.addResourceTable(city.getProductionTable());
             }
         }
@@ -316,11 +339,11 @@ public class ResourceManager {
                                     ResourceTable productionTable = city.getProductionTable();
                                     ResourceTable negatives = productionTable.negatives();
 
-                                    if  (negatives.doesUserHave(user, this).size() == 0)  {
+                                    if (negatives.doesUserHave(user, this).size() == 0) {
                                         productionTable.getTable(this)
-                                        .forEach((r, q) -> {
-                                            r.increment(user, q);
-                                        });
+                                                .forEach((r, q) -> {
+                                                    r.increment(user, q);
+                                                });
                                     }
                                 }
 
@@ -332,5 +355,9 @@ public class ResourceManager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    public List<Resource> getResources() {
+        return Collections.unmodifiableList(resources);
     }
 }
